@@ -8,6 +8,9 @@ public class EnemyScript : MonoBehaviour {
 	[SerializeField] Transform parent;
 
 	[SerializeField] int scorePerHit = 10;
+	[SerializeField] int scorePerKill = 100;
+	[SerializeField] int damagePerHit = 25;
+	[SerializeField] int healthPoints = 100;
 
 	ScoreBoard scoreBoard;
 
@@ -23,8 +26,20 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	void OnParticleCollision (GameObject other) {
-		Debug.Log("Enemy hit by " + other.name);
+		TakeDamage();
+		if (healthPoints <= 0) {
+			KillEnemy();
+		}
+	}
+
+	void TakeDamage () {
 		scoreBoard.ScoreHit(scorePerHit);
+		healthPoints -= damagePerHit;
+		//todo consider particle effect
+	}
+
+	void KillEnemy () {
+		scoreBoard.ScoreHit(scorePerKill);
 		ParticleSystem fx = Instantiate(deathFX, transform.position, Quaternion.identity);
 		fx.transform.parent = parent;
 		fx.Play();
